@@ -7,7 +7,8 @@ module Api
         training = Training.new(trainings_params)
 
         if training.save
-          render json: TrainingSerializer.new(training).serializer_json
+          render json:
+            TrainingSerializer.new(training).serializable_hash.to_json
         else
           render json: {
             error: training.error.full_messages,

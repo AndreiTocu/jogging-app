@@ -5,13 +5,15 @@ module Api
       def index
         users = User.all
 
-        render json: UserSerializer.new(users, options).serializable_hash.to_json
+        render json:
+          UserSerializer.new(users, options).serializable_hash.to_json
       end
 
       def show
         user = User.find(params[:id])
 
-        render json: UserSerializer.new(user, options).serializable_hash.to_json
+        render json:
+          UserSerializer.new(user, options).serializable_hash.to_json
       end
 
       def create
@@ -32,7 +34,8 @@ module Api
         user = User.find(params[:id])
 
         if user.update(user_params)
-          render json: UserSerializer.new(user, options).serializable_hash.to_json
+          render json:
+            UserSerializer.new(user, options).serializable_hash.to_json
         else
           render json: {
             error: user.errors.full_messages,
