@@ -5,18 +5,28 @@ import { Menu } from 'antd'
 
 const { SubMenu } = Menu
 
-const Navbar = () => {
+function Navbar(props) {
   return (
      <Menu mode="horizontal">
        <Menu.Item key='Home'>
          <Link to="/">Home</Link>
        </Menu.Item>
-       <Menu.Item key='Login'>
-         <Link to="/login">Sign In</Link>
-       </Menu.Item>
-       <Menu.Item key='SignUp'>
-         <Link to="/SignUp">Sign Up</Link>
-       </Menu.Item>
+       {props.userData.id
+          ? <Menu.Item key='Times'>
+              <Link to="#">My Times</Link>
+            </Menu.Item>
+          : <Menu.Item key='Login'>
+              <Link to="/signin">Sign In</Link>
+            </Menu.Item>
+       }
+       {props.userData.id
+         ? <Menu.Item key='LogOut'>
+             <Link to="/signout">Log Out</Link>
+           </Menu.Item>
+         : <Menu.Item key='SignUp'>
+             <Link to="/signup">Sign Up</Link>
+           </Menu.Item>
+       }
      </Menu>
   )
 }

@@ -1,15 +1,15 @@
 import React, { useState } from 'react';
-import 'antd/dist/antd.css';
-import { useHistory } from 'react-router-dom';
-import { Alert, Layout, Form, Input, Button, Checkbox, Card } from 'antd';
+import { useHistory, useLocation } from 'react-router-dom';
 import axios from 'axios'
+import 'antd/dist/antd.css';
+import { Layout, Form, Input, Button, Checkbox, Card, Alert } from 'antd';
 
 const layout = {
   labelCol: {
-    span: 10,
+    span: 8,
   },
   wrapperCol: {
-    span: 10,
+    span: 16,
   },
 };
 const tailLayout = {
@@ -19,31 +19,27 @@ const tailLayout = {
   },
 };
 
-const SignUp = () => {
-
-  const [error, setError] = useState('');
+function SignIn(props) {
+  const location = useLocation();
   const history = useHistory();
-  const onSuccessLocation = {
-    pathname: '/signin',
-  }
+  const [error, setError] = useState('');
 
   const onFinish = (values) => {
     delete values.confirm;
     setError('');
-    axios.post('/api/users', {
-      user: {
-        name: values.name,
+    axios.post('/api/signin', {
+      session: {
         email: values.email,
-        password: values.password,
-        password_confirmation: values.password_confirmation
+        password: values.password
       }
-    }).then(resp => {
-      if (resp.data.success === 1){
-        history.push(onSuccessLocation);
-      } else {
-        setError(resp.data.error);
-      }
+    }).then(data => {
+      data.data.success === 1 ? props.onSigninSuccess()
+        : setError(data.data.error);
     });
+  };
+
+  const onFinishFailed = (errorInfo) => {
+    console.log('Failed:', errorInfo);
   };
 
   const pageStyle = { alignItems: 'center' };
@@ -52,7 +48,7 @@ const SignUp = () => {
     <Layout style={pageStyle}>
       <Card>
         {error &&
-          <Alert description={error[0]} type="error" showIcon closable />}
+          <Alert description={error} type="error" showIcon closable />}
         <Form
           {...layout}
           name="basic"
@@ -60,27 +56,15 @@ const SignUp = () => {
             remember: true,
           }}
           onFinish={onFinish}
+          onFinishFailed={onFinishFailed}
         >
-          <Form.Item
-            label="Name"
-            name="name"
-            rules={[
-              {
-                required: true,
-                message: 'Please input your Name!',
-              },
-            ]}
-          >
-            <Input />
-          </Form.Item>
-
           <Form.Item
             label="Email"
             name="email"
             rules={[
               {
                 required: true,
-                message: 'Please input your email!',
+                message: 'Please input your Email!',
               },
             ]}
           >
@@ -100,17 +84,8 @@ const SignUp = () => {
             <Input.Password />
           </Form.Item>
 
-          <Form.Item
-            label="Password Confirmation"
-            name="password_confirmation"
-            rules={[
-              {
-                required: true,
-                message: 'Please input your password confirmation!',
-              },
-            ]}
-          >
-            <Input.Password />
+          <Form.Item {...tailLayout} name="remember" valuePropName="checked">
+            <Checkbox>Remember me</Checkbox>
           </Form.Item>
 
           <Form.Item {...tailLayout}>
@@ -124,4 +99,4 @@ const SignUp = () => {
   );
 };
 
-export default SignUp
+export default SignIn
