@@ -13,7 +13,7 @@ function Navbar(props) {
        </Menu.Item>
        {props.userData.id
           ? <Menu.Item key='Times'>
-              <Link to="#">My Times</Link>
+              <Link to="/feed">My Times</Link>
             </Menu.Item>
           : <Menu.Item key='Login'>
               <Link to="/signin">Sign In</Link>

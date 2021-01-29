@@ -1,15 +1,28 @@
 module Api
   class TrainingsController < ApplicationController
     skip_before_action :verify_authenticity_token
+    before_action :logged_in_user, only: [:show, :create, :destroy, :update]
+
+    def show
+      @user = User.find(params[:id])
+      @trainings = set_trainings(@user.trainings)
+      render json: {
+        success: 1,
+        trainings: @trainings
+      }
+    end
 
     def create
-      training = Training.new(trainings_params)
+      training = current_user.trainings.create(trainings_params)
 
       if training.save
-        render json:
-          TrainingSerializer.new(training).serializable_hash.to_json
+        render json: {
+          success: 1,
+          training: training
+        }
       else
         render json: {
+          success: 0,
           error: training.error.full_messages,
           status: 422,
         }
@@ -20,7 +33,9 @@ module Api
       training = Training.find(params[:id])
 
       if training.destroy
-        head :no_content
+        render json: {
+          success: 1
+        }
       else
         render json: {
           error: training.error.full_messages,
@@ -29,10 +44,37 @@ module Api
       end
     end
 
+    def update
+      training = Training.find(params[:id])
+
+      if training.update(trainings_params)
+        training = set_training(training)
+        render json: {
+          success: 1,
+          training: training
+        }
+      else
+        render json: {
+          success: 0,
+          error: "Could not update the training record"
+        }
+      end
+    end
+
     private
 
       def trainings_params
-        params.require(:training).permit(:date, :distance, :time, :user_id)
+        params.require(:training).permit(:date, :distance, :time)
+      end
+
+      def valid_data?
+        if (params[:distance].to_a?(Float) &&
+          params[:time].methods.include?(:strftime) &&
+            params[:date].methods.include?(:strftime))
+          return 0
+        else
+          return 1
+        end
       end
   end
 end
