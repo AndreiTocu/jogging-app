@@ -25,5 +25,9 @@
   },
   "engines": {
     "yarn": "1.22.4"
+  },
+  "scripts": {
+    "webpack:deploy": "webpack --config=webpack/webpack.config.js -p",
+    "heroku-postbuild": "npm run webpack:deploy"
   }
 }
