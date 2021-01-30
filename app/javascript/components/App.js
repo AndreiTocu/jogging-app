@@ -1,6 +1,7 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { Route, Switch } from 'react-router-dom'
 import { Layout, Divider } from 'antd';
+import 'antd/dist/antd.css';
 import axios from 'axios'
 import Home from './Home'
 import SignUp from './Authentication/SignUp'
